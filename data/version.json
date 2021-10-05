@@ -1,0 +1,73 @@
+{
+  "ver": "11.19",
+  "host": "https://cdn.jsdelivr.net/gh/ASTWY/iloli@master/lcufixtool/wad/",
+  "msgContorl": true,
+  "msg": "[blue]当前工具支持版本：11.19[/blue]\n简洁版特效小工具正在测试中，欢迎反馈BUG！\n[green]请务必在关闭客户端后使用[/green]",
+  "data": [
+    {
+      "name": "rcp-fe-lol-collections.wad",
+      "path": "LeagueClient/Plugins/rcp-fe-lol-collections/description.json",
+      "class": "恢复阉割功能",
+      "note": "开启藏品图标和好友聊天独立窗口功能",
+      "md5": "10BD1C3657FD617DE449D42760051F4C",
+      "type": "add"
+    },
+    {
+      "name": "rcp-fe-lol-champ-select.wad",
+      "path": "LeagueClient/Plugins/rcp-fe-lol-champ-select/description.json",
+      "class": "恢复阉割动画",
+      "note": "还原国服阉割的全部炫酷特效",
+      "md5": "3E6CA3428ABBD6F14DB8472C2A443FC7",
+      "type": "add"
+    },
+    {
+      "name": "rcp-fe-lol-navigation.wad",
+      "path": "LeagueClient/Plugins/rcp-fe-lol-navigation/description.json",
+      "class": "外服式导航栏图标",
+      "note": "导航栏换为外服简洁好看的纯图标样式",
+      "md5": "B4C2A21739B4213BA99585A2AF93A1FC",
+      "type": "add"
+    },
+    {
+      "name": "rcp-fe-lol-parties.wad",
+      "path": "LeagueClient/Plugins/rcp-fe-lol-parties/description.json",
+      "class": "恢复阉割动画",
+      "note": "还原国服阉割的全部炫酷特效",
+      "md5": "75798C00962FADBC5BD0EFC88F5CB275",
+      "type": "add"
+    },
+    {
+      "name": "rcp-fe-lol-social.wad",
+      "path": "LeagueClient/Plugins/rcp-fe-lol-social/description.json",
+      "class": "恢复阉割功能",
+      "note": "开启藏品图标和好友聊天独立窗口功能",
+      "md5": "E58C756430F57248BD3E76F6C548D2AB",
+      "type": "add"
+    },
+    {
+      "name": "zh_CN-assets-name.wad",
+      "path": "LeagueClient/Plugins/rcp-be-lol-game-data/description.json",
+      "class": "外服式英雄名称",
+      "note": "英雄名称显示为真实名字而非英雄称号",
+      "md5": "7AD4AB5B09BDB793FD22578E318E688A",
+      "type": "cover",
+      "orgin": "zh_CN-assets.wad"
+    },
+    {
+      "name": "rcp-be-lol-game-data-bgm.wad",
+      "path": "LeagueClient/Plugins/rcp-be-lol-game-data/description.json",
+      "class": "老版Ban/Pick背景音乐",
+      "note": "切换为怀旧版本的排位音乐",
+      "md5": "7689A4DCB223DBBCBDA1F72A0E91EB5E",
+      "type": "add"
+    },
+    {
+      "name": "rcp-fe-lol-champ-select-bgm.wad",
+      "path": "LeagueClient/Plugins/rcp-fe-lol-champ-select/description.json",
+      "class": "老版Ban/Pick背景音乐",
+      "note": "切换为怀旧版本的排位音乐",
+      "md5": "FF5E43C6DBAD6A2324E86EC80ACC9214",
+      "type": "add"
+    }
+  ]
+}
