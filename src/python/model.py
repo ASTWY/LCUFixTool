@@ -3,7 +3,7 @@ from requests import get
 
 
 def GetConfig():
-    res = get("https://gitee.com/ASTWY/iloli/raw/master/data/lcufixtool.json")
+    res = get("https://gitee.com/ASTWY/lcufix-tool/raw/master/version.json")
     if res.status_code == 200:
         return res.json()
 
