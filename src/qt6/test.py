@@ -5,10 +5,10 @@ from PySide6.QtWidgets import QApplication, QMainWindow
 from lcu_ui import Ui_MainWindow
 
 
-class myWindow(QMainWindow, Ui_MainWindow):
+class LCUFixTool(QMainWindow, Ui_MainWindow):
     def __init__(self, *args, **kwargs):
-
-        super(myWindow, self).__init__(*args, **kwargs)
+        self.app = QApplication(sys.argv)
+        super(LCUFixTool, self).__init__(*args, **kwargs)
 
         self.setupUi(self)  # 初始化ui
 
@@ -18,11 +18,10 @@ class myWindow(QMainWindow, Ui_MainWindow):
 
 
 if __name__ == "__main__":  # 程序的入口
-
-    app = QApplication(sys.argv)
-
-    win = myWindow()
-
-    win.show()
-
-    sys.exit(app.exec())
+    try:
+        app = LCUFixTool()
+        app.show()
+        sys.exit(app.app.exec())  # 进入事件循环
+    except Exception as e:
+        print(e)
+    pass

@@ -1,0 +1,85 @@
+{
+    "ver": "12.7",
+    "host": "https://ghproxy.com/https://raw.githubusercontent.com/ASTWY/LCUFixTool/master/wad/12.7.1/",
+    "msgContorl": true,
+    "msg": "当前工具支持版本：12.7\n如遇到下载缓慢问题，请切换网络环境尝试！\n无视隐藏生涯功能因存在争议不再提供支持\n强烈推荐LeagueTavern符文助手官网：Mitay.net\n简洁版特效小工具正在测试中，如有问题请加LanPlanet A11_②群（955923860）反馈BUG！\n请务必在关闭客户端后使用",
+    "data": {
+        "恢复阉割动画": [
+            {
+                "name": "rcp-fe-lol-champ-select.wad",
+                "path": "LeagueClient/Plugins/rcp-fe-lol-champ-select/description.json",
+                "note": "还原国服阉割的全部炫酷特效",
+                "md5": "9825A9A979E788696D260752543CE21C",
+                "type": "add"
+            },
+            {
+                "name": "rcp-fe-lol-parties.wad",
+                "path": "LeagueClient/Plugins/rcp-fe-lol-parties/description.json",
+                "note": "还原国服阉割的全部炫酷特效",
+                "md5": "F59C65F9D92AD026AECF1EDBB54E1317",
+                "type": "add"
+            }
+        ],
+        "恢复阉割功能": [
+            {
+                "name": "rcp-fe-lol-collections.wad",
+                "path": "LeagueClient/Plugins/rcp-fe-lol-collections/description.json",
+                "note": "开启藏品图标和好友聊天悬浮窗口",
+                "md5": "3177A8F4B4B2632A3311AAD1AA516C02",
+                "type": "add"
+            },
+            {
+                "name": "rcp-fe-lol-social.wad",
+                "path": "LeagueClient/Plugins/rcp-fe-lol-social/description.json",
+                "note": "开启藏品图标和好友聊天悬浮窗口",
+                "md5": "8124017D9628190C7A5E44D8FF834837",
+                "type": "add"
+            }
+        ],
+        "强制开启新版对局结算页面": [
+            {
+                "name": "rcp-fe-lol-postgame.wad",
+                "path": "LeagueClient/Plugins/rcp-fe-lol-postgame/description.json",
+                "note": "提前体验测试服成就系统新版炫酷结算页面",
+                "md5": "A9A108D8EF4EAE64C6C03C22DA44A1AD",
+                "type": "add"
+            }
+        ],
+        "外服式导航栏图标": [
+            {
+                "name": "rcp-fe-lol-navigation.wad",
+                "path": "LeagueClient/Plugins/rcp-fe-lol-navigation/description.json",
+                "note": "导航栏显示模式切换为外服简洁好看的纯图标样式",
+                "md5": "0768380C911066A3AB60C981E8EA1CBD",
+                "type": "add"
+            }
+        ],
+        "外服式英雄名称": [
+            {
+                "name": "zh_CN-assets-name.wad",
+                "path": "LeagueClient/Plugins/rcp-be-lol-game-data/description.json",
+                "note": "英雄名称显示为真实名字(亚索)而非英雄称号(疾风剑豪)",
+                "md5": "CACFB08EAFE3424CBD4FB67DB9BB6BBB",
+                "type": "cover",
+                "orginKey": "['riotMeta']['perLocaleAssetBundles']['zh_CN'][0]",
+                "orginValue": "zh_CN-assets.wad"
+            }
+        ],
+        "老版Ban/Pick背景音乐": [
+            {
+                "name": "rcp-be-lol-game-data-bgm.wad",
+                "path": "LeagueClient/Plugins/rcp-be-lol-game-data/description.json",
+                "note": "切换为怀旧版本的排位音乐",
+                "md5": "7689A4DCB223DBBCBDA1F72A0E91EB5E",
+                "type": "add"
+            },
+            {
+                "name": "rcp-fe-lol-champ-select-bgm.wad",
+                "path": "LeagueClient/Plugins/rcp-fe-lol-champ-select/description.json",
+                "note": "切换为怀旧版本的排位音乐",
+                "md5": "FF5E43C6DBAD6A2324E86EC80ACC9214",
+                "type": "add"
+            }
+        ]
+    }
+}

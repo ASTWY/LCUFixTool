@@ -72,7 +72,7 @@ class FuncList(QListWidget):
     def reload(self):
         self.clear()
         server_info = get_server_info(
-            "https://gitee.com/ASTWY/lcufix-tool/raw/master/version.json"
+            "https://ghproxy.fsofso.com/https://github.com/ASTWY/LCUFixTool/blob/dev/version.json"
         )
         for item in server_info.data:
             _item = QListWidgetItem(item.class_)
@@ -459,7 +459,6 @@ class Ui_MainWindow(object):
         self.label_14.setStyleSheet("color: rgb(255, 255, 255);")
         self.label_14.setAlignment(Qt.AlignCenter)
         MainWindow.setCentralWidget(self.centralwidget)
-        self.about_frame.raise_()
         self.label_3.raise_()
         self.label_4.raise_()
         self.progressBar.raise_()
@@ -480,6 +479,7 @@ class Ui_MainWindow(object):
         self.label_14.raise_()
         self.exitApp.raise_()
         self.minimize.raise_()
+        self.about_frame.raise_()
 
         self.retranslateUi(MainWindow)
         self.about_close.clicked.connect(self.about_frame.hide)
