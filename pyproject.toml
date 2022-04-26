@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "lcufixtool"
+version = "0.1.0"
+description = ""
+authors = ["astwy <2477547246@qq.com>"]
+
+[tool.poetry.dependencies]
+python = "3.10"
+rich = "^12.2.0"
+httpx = "^0.22.0"
+PySide6 = "^6.3.0"
+pyinstaller = "^5.0"
+logger = "^1.4"
+pip = "^22.0.4"
+pypiwin32 = "^223"
+
+[tool.poetry.dev-dependencies]
+black = {version = "^22.3.0", allow-prereleases = true}
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
