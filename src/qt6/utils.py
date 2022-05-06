@@ -111,7 +111,8 @@ def set_lol_wad_status(lol_path: str, wad_info: WAD_Info, status: bool) -> bool:
             cfg_data = load(f)
             if wad_info.type == "add":
                 if status:
-                    cfg_data["riotMeta"]["globalAssetBundles"].append(wad_info.name)
+                    if wad_info.name not in cfg_data["riotMeta"]["globalAssetBundles"]:
+                        cfg_data["riotMeta"]["globalAssetBundles"].append(wad_info.name)
                 else:
                     # 删除列表中的元素
                     if wad_info.name in cfg_data["riotMeta"]["globalAssetBundles"]:
