@@ -1,7 +1,7 @@
 import sys
 
 import psutil
-from PySide6.QtCore import QCoreApplication, Qt, QUrl
+from PySide6.QtCore import QCoreApplication, Qt, QThread, QUrl
 from PySide6.QtNetwork import QNetworkAccessManager, QNetworkRequest
 from PySide6.QtWidgets import (
     QApplication,
@@ -23,6 +23,10 @@ class LCUFixTool(QMainWindow, Ui_MainWindow):
         super(LCUFixTool, self).__init__(*args, **kwargs)
 
         self.setupUi(self)  # 初始化ui
+        # 检查本地配置
+        self.check_local()
+        # 进度条置零
+        self.progressBar.setValue(0)
         # 选择目录按钮事件绑定
         self.manual_operation.clicked.connect(self.select_path)
         # 功能列表点击事件绑定
@@ -33,6 +37,18 @@ class LCUFixTool(QMainWindow, Ui_MainWindow):
         self.smtx.clicked.connect(self.clean_client)
         # 检查更新
         self.check_update()
+
+    # 检查本地配置
+    def check_local(self):
+        import json
+
+        cfg_file = Path("~/Documents/LCUFixTool/config.json")
+        cfg_file = cfg_file.expanduser()
+        with cfg_file.open("r") as f:
+            config = json.load(f)
+        self.lol_path = config["lol"]
+        self.path_show.setText(self.lol_path)
+        self.path_show.setEnabled(True)
 
     # 重载功能列表
     def reload(self):
@@ -64,8 +80,32 @@ class LCUFixTool(QMainWindow, Ui_MainWindow):
                 wad_path = Path(self.lol_path, item.path).parent / item.name
                 if not wad_path.exists():
                     uri = self.server_data.host + item.name
-                    download_wad(uri, wad_path, self.progressBar)
+                    # 用QThread开启线程下载
+                    class DownloadThread(QThread):
+                        def __init__(
+                            self,
+                            uri,
+                            wad_path,
+                            progressBar: QProgressBar,
+                            *args,
+                            **kwargs
+                        ):
+                            super(DownloadThread, self).__init__(*args, **kwargs)
+                            self.uri = uri
+                            self.wad_path = wad_path
+                            self.progressBar = progressBar
+
+                        def run(self):
+                            download_wad(uri, wad_path, self.progressBar)
+
+                    thread = DownloadThread(uri, wad_path, self.progressBar)
+                    thread.start()
+                    # 等待线程结束
+                    thread.wait()
+                    # 进度条归零
+                    self.progressBar.setValue(0)
                 set_lol_wad_status(self.lol_path, item, True)
+        self.reload()
 
     # 检查更新
     def check_update(self):
@@ -97,7 +137,20 @@ class LCUFixTool(QMainWindow, Ui_MainWindow):
             QCoreApplication.translate("MainWindow", "请选择英雄联盟安装目录", None),
         )
         if check_lol_path(tmp):
+            import json
+
             self.lol_path = check_lol_path(tmp)
+            # 保存LOL目录
+            cfg_file = Path("~/Documents/LCUFixTool/config.json")
+            cfg_file = cfg_file.expanduser()
+            if not cfg_file.parent.exists():
+                cfg_file.parent.mkdir(parents=True)
+            with cfg_file.open("r+") as f:
+                config = json.load(f)
+                config["lol"] = self.lol_path
+                f.seek(0)
+                f.truncate()
+                json.dump(config, f)
             # 功能列表更新
             self.reload()
             self.path_show.setText(self.lol_path)
@@ -179,7 +232,9 @@ class LCUFixTool(QMainWindow, Ui_MainWindow):
 
 
 if __name__ == "__main__":  # 程序的入口
-
-    app = LCUFixTool()
-    app.show()
-    sys.exit(app.app.exec())  # 进入事件循环
+    try:
+        app = LCUFixTool()
+        app.show()
+        sys.exit(app.app.exec())  # 进入事件循环
+    except Exception as e:
+        print(e)
