@@ -18,9 +18,9 @@ from PySide6.QtCore import (
     QPoint,
     QRect,
     QSize,
-    Qt,
     QTime,
     QUrl,
+    Qt,
 )
 from PySide6.QtGui import (
     QBrush,
@@ -52,73 +52,54 @@ from PySide6.QtWidgets import (
     QPlainTextEdit,
     QProgressBar,
     QPushButton,
-    QRadioButton,
     QSizePolicy,
     QWidget,
 )
-from PySide6.QtNetwork import QNetworkAccessManager, QNetworkRequest
-
 import lcu_rc
-from utils import *
-
-
-lol_path = "E:\Game\Riot Games\CN"
-
-# 功能列表 继承自QListWidget
-class FuncList(QListWidget):
-    def __init__(self, parent: QWidget = None):
-        self.data = None  # 功能列表数据
-        super(FuncList, self).__init__(parent)
-        self.itemChanged.connect(self.item_checked)
-        if self.data:
-            self.reload()
-
-    def item_checked(self, item: QListWidgetItem):
-        global lol_path
-        if item.checkState() == Qt.Unchecked:
-            for item in self.data[item.text()]:
-                set_lol_wad_status(lol_path, item, False)
-        else:
-            for item in self.data[item.text()]:
-                set_lol_wad_status(lol_path, item, True)
-
-    def reload(self, data=None):
-        if self.data is None:
-            self.data = data
-        self.clear()
-        for wad_class_name in self.data:
-            _item = QListWidgetItem(wad_class_name)
-            # 取self.data[wad_class_name]的所有元素，并且把它们的安装状态设置取且运算
-            _item.setCheckState(
-                Qt.Checked
-                if all(
-                    [
-                        get_lol_wad_status(lol_path, wad_name)
-                        for wad_name in self.data[wad_class_name]
-                    ]
-                )
-                else Qt.Unchecked
-            )
-            self.addItem(_item)
 
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName("MainWindow")
-        MainWindow.setWindowFlags(Qt.FramelessWindowHint)
         MainWindow.resize(740, 550)
         MainWindow.setMinimumSize(QSize(740, 550))
         MainWindow.setMaximumSize(QSize(740, 550))
+        # 隐藏标题栏
+        MainWindow.setWindowFlags(Qt.FramelessWindowHint)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.options_widget = FuncList(self.centralwidget)
-        self.check_update()
-        self.options_widget.setObjectName("options_widget")
-        self.options_widget.setGeometry(QRect(20, 90, 311, 311))
+        self.smtx = QPushButton(self.centralwidget)
+        self.smtx.setObjectName("smtx")
+        self.smtx.setGeometry(QRect(20, 380, 311, 41))
         font = QFont()
-        font.setPointSize(12)
-        self.options_widget.setFont(font)
+        font.setFamilies(["\u5fae\u8f6f\u96c5\u9ed1"])
+        font.setPointSize(13)
+        font.setBold(True)
+        self.smtx.setFont(font)
+        self.smtx.setStyleSheet(
+            "QPushButton\n"
+            "{\n"
+            "background-color:rgb(200, 74, 76);\n"
+            "color:white;\n"
+            "border-radius:5px;\n"
+            "}\n"
+            "QPushButton::hover{\n"
+            "background-color:rgb(170, 74, 76);\n"
+            "}\n"
+            "\n"
+            "QPushButton::pressed{\n"
+            "background-color:rgb(165, 54, 76);\n"
+            "}\n"
+            ""
+        )
+        self.smtx.setFlat(True)
+        self.options_widget = QListWidget(self.centralwidget)
+        self.options_widget.setObjectName("options_widget")
+        self.options_widget.setGeometry(QRect(20, 110, 311, 231))
+        font1 = QFont()
+        font1.setPointSize(12)
+        self.options_widget.setFont(font1)
         self.options_widget.setStyleSheet(
             "background-color:rgba(255, 255, 255, 0);\n"
             "border:1px solid rgb(255, 255, 255, 0);\n"
@@ -148,8 +129,7 @@ class Ui_MainWindow(object):
         self.label_3.setObjectName("label_3")
         self.label_3.setGeometry(QRect(0, 0, 741, 550))
         self.label_3.setStyleSheet(
-            "background-image: url(:/img/riot-background.png);\n"
-            "                         "
+            "background-image: url(:/img/riot-background.png);\n" ""
         )
         self.label_4 = QLabel(self.centralwidget)
         self.label_4.setObjectName("label_4")
@@ -160,16 +140,16 @@ class Ui_MainWindow(object):
         self.current_operation = QLabel(self.centralwidget)
         self.current_operation.setObjectName("current_operation")
         self.current_operation.setGeometry(QRect(400, 470, 261, 21))
-        font1 = QFont()
-        font1.setFamilies(["\u5fae\u8f6f\u96c5\u9ed1"])
-        font1.setPointSize(15)
-        font1.setBold(True)
-        self.current_operation.setFont(font1)
+        font2 = QFont()
+        font2.setFamilies(["\u5fae\u8f6f\u96c5\u9ed1"])
+        font2.setPointSize(15)
+        font2.setBold(True)
+        self.current_operation.setFont(font2)
         self.current_operation.setStyleSheet("color: rgb(255, 255, 255);")
-        self.exitApp = QPushButton(self.centralwidget)
-        self.exitApp.setObjectName("exitApp")
-        self.exitApp.setGeometry(QRect(700, 0, 41, 25))
-        self.exitApp.setStyleSheet(
+        self.close_window = QPushButton(self.centralwidget)
+        self.close_window.setObjectName("close_window")
+        self.close_window.setGeometry(QRect(700, 0, 41, 25))
+        self.close_window.setStyleSheet(
             "QPushButton\n"
             "{\n"
             "background-color: rgb(255, 255, 255,0);\n"
@@ -182,11 +162,11 @@ class Ui_MainWindow(object):
             "background-color: rgb(255, 0, 0,180);\n"
             "}\n"
             "\n"
-            "                         "
+            ""
         )
         icon = QIcon()
         icon.addFile(":/img/close.png", QSize(), QIcon.Normal, QIcon.Off)
-        self.exitApp.setIcon(icon)
+        self.close_window.setIcon(icon)
         self.minimize = QPushButton(self.centralwidget)
         self.minimize.setObjectName("minimize")
         self.minimize.setGeometry(QRect(660, 0, 41, 25))
@@ -203,7 +183,7 @@ class Ui_MainWindow(object):
             "background-color: rgb(255, 255, 255,150);\n"
             "}\n"
             "\n"
-            "                         "
+            ""
         )
         icon1 = QIcon()
         icon1.addFile(":/img/icon_minimize.png", QSize(), QIcon.Normal, QIcon.Off)
@@ -211,47 +191,47 @@ class Ui_MainWindow(object):
         self.program_title = QLabel(self.centralwidget)
         self.program_title.setObjectName("program_title")
         self.program_title.setGeometry(QRect(10, 0, 221, 21))
-        font2 = QFont()
-        font2.setFamilies(["\u5fae\u8f6f\u96c5\u9ed1"])
-        font2.setPointSize(10)
-        self.program_title.setFont(font2)
+        font3 = QFont()
+        font3.setFamilies(["\u5fae\u8f6f\u96c5\u9ed1"])
+        font3.setPointSize(10)
+        self.program_title.setFont(font3)
         self.program_title.setStyleSheet("color: rgb(255, 255, 255);")
         self.label_5 = QLabel(self.centralwidget)
         self.label_5.setObjectName("label_5")
         self.label_5.setGeometry(QRect(0, 0, 370, 551))
-        font3 = QFont()
-        font3.setPointSize(8)
-        self.label_5.setFont(font3)
+        font4 = QFont()
+        font4.setPointSize(8)
+        self.label_5.setFont(font4)
         self.label_5.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.label = QLabel(self.centralwidget)
         self.label.setObjectName("label")
-        self.label.setGeometry(QRect(480, 140, 145, 151))
+        self.label.setGeometry(QRect(470, 160, 145, 151))
         self.label.setPixmap(QPixmap(":/img/lol_icon.png"))
         self.label.setScaledContents(True)
         self.label_6 = QLabel(self.centralwidget)
         self.label_6.setObjectName("label_6")
-        self.label_6.setGeometry(QRect(390, 290, 321, 41))
-        font4 = QFont()
-        font4.setFamilies(["\u5fae\u8f6f\u96c5\u9ed1"])
-        font4.setPointSize(20)
-        font4.setBold(True)
-        self.label_6.setFont(font4)
+        self.label_6.setGeometry(QRect(380, 310, 321, 41))
+        font5 = QFont()
+        font5.setFamilies(["\u5fae\u8f6f\u96c5\u9ed1"])
+        font5.setPointSize(20)
+        font5.setBold(True)
+        self.label_6.setFont(font5)
         self.label_6.setStyleSheet("color: rgb(255, 255, 255);")
         self.label_6.setAlignment(Qt.AlignCenter)
         self.label_7 = QLabel(self.centralwidget)
         self.label_7.setObjectName("label_7")
-        self.label_7.setGeometry(QRect(390, 330, 321, 20))
-        self.label_7.setFont(font2)
+        self.label_7.setGeometry(QRect(380, 350, 321, 20))
+        self.label_7.setFont(font3)
         self.label_7.setStyleSheet("color: rgb(255, 255, 255);")
         self.label_7.setAlignment(Qt.AlignCenter)
         self.label_8 = QLabel(self.centralwidget)
         self.label_8.setObjectName("label_8")
-        self.label_8.setGeometry(QRect(20, 20, 111, 41))
-        font5 = QFont()
-        font5.setFamilies(["\u5fae\u8f6f\u96c5\u9ed1"])
-        font5.setPointSize(18)
-        font5.setBold(True)
-        self.label_8.setFont(font5)
+        self.label_8.setGeometry(QRect(20, 50, 211, 31))
+        font6 = QFont()
+        font6.setFamilies(["\u5fae\u8f6f\u96c5\u9ed1"])
+        font6.setPointSize(18)
+        font6.setBold(True)
+        self.label_8.setFont(font6)
         self.about_frame = QFrame(self.centralwidget)
         self.about_frame.setObjectName("about_frame")
         self.about_frame.setGeometry(QRect(-1, -1, 741, 551))
@@ -261,7 +241,7 @@ class Ui_MainWindow(object):
         self.label_10 = QLabel(self.about_frame)
         self.label_10.setObjectName("label_10")
         self.label_10.setGeometry(QRect(70, 90, 111, 31))
-        self.label_10.setFont(font4)
+        self.label_10.setFont(font5)
         self.label_10.setStyleSheet(
             "background-color: rgba(255, 255, 255, 0);\n" "color: rgb(255, 255, 255);"
         )
@@ -276,23 +256,22 @@ class Ui_MainWindow(object):
         self.path_show = QLineEdit(self.path)
         self.path_show.setObjectName("path_show")
         self.path_show.setGeometry(QRect(30, 10, 451, 31))
-        font6 = QFont()
-        font6.setFamilies(["\u5fae\u8f6f\u96c5\u9ed1"])
-        self.path_show.setFont(font6)
+        font7 = QFont()
+        font7.setFamilies(["\u5fae\u8f6f\u96c5\u9ed1"])
+        self.path_show.setFont(font7)
         self.path_show.setStyleSheet(
             "background-color: rgb(176, 176, 176,150);\n"
             "border:1px solid rgb(255, 255, 255, 0);\n"
-            "border-radius:5px;\n"
-            "color: rgb(255, 255, 255);"
+            "border-radius:5px;"
         )
         self.path_show.setReadOnly(True)
         self.manual_operation = QPushButton(self.path)
         self.manual_operation.setObjectName("manual_operation")
         self.manual_operation.setGeometry(QRect(490, 10, 81, 31))
-        font7 = QFont()
-        font7.setFamilies(["\u5fae\u8f6f\u96c5\u9ed1"])
-        font7.setBold(False)
-        self.manual_operation.setFont(font7)
+        font8 = QFont()
+        font8.setFamilies(["\u5fae\u8f6f\u96c5\u9ed1"])
+        font8.setBold(False)
+        self.manual_operation.setFont(font8)
         self.manual_operation.setStyleSheet(
             "QPushButton\n"
             "{\n"
@@ -308,7 +287,7 @@ class Ui_MainWindow(object):
             "background-color:rgb(65, 113, 200);\n"
             "}\n"
             "\n"
-            "                                   "
+            ""
         )
         self.about_close = QPushButton(self.about_frame)
         self.about_close.setObjectName("about_close")
@@ -327,20 +306,20 @@ class Ui_MainWindow(object):
             "QPushButton::pressed{\n"
             "background-color:rgb(91,92,95);\n"
             "}\n"
-            "                              "
+            ""
         )
         self.about_close.setIcon(icon)
         self.about_close.setIconSize(QSize(30, 30))
         self.label_11 = QLabel(self.about_frame)
         self.label_11.setObjectName("label_11")
         self.label_11.setGeometry(QRect(70, 220, 111, 31))
-        self.label_11.setFont(font4)
+        self.label_11.setFont(font5)
         self.label_11.setStyleSheet(
             "background-color: rgba(255, 255, 255, 0);\n" "color: rgb(255, 255, 255);"
         )
         self.about = QFrame(self.about_frame)
         self.about.setObjectName("about")
-        self.about.setGeometry(QRect(70, 260, 601, 161))
+        self.about.setGeometry(QRect(70, 260, 601, 121))
         self.about.setStyleSheet(
             "background-color: rgb(55, 55, 55);\n" "border-radius:8px;"
         )
@@ -348,49 +327,38 @@ class Ui_MainWindow(object):
         self.about.setFrameShadow(QFrame.Raised)
         self.plainTextEdit_2 = QPlainTextEdit(self.about)
         self.plainTextEdit_2.setObjectName("plainTextEdit_2")
-        self.plainTextEdit_2.setGeometry(QRect(20, 20, 551, 121))
-        font8 = QFont()
-        font8.setFamilies(["\u5fae\u8f6f\u96c5\u9ed1"])
-        font8.setPointSize(12)
-        self.plainTextEdit_2.setFont(font8)
+        self.plainTextEdit_2.setGeometry(QRect(20, 20, 551, 71))
+        font9 = QFont()
+        font9.setFamilies(["\u5fae\u8f6f\u96c5\u9ed1"])
+        font9.setPointSize(12)
+        self.plainTextEdit_2.setFont(font9)
         self.plainTextEdit_2.setStyleSheet("color: rgb(255, 255, 255);")
         self.plainTextEdit_2.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.plainTextEdit_2.setReadOnly(True)
         self.restart = QPushButton(self.centralwidget)
         self.restart.setObjectName("restart")
-        self.restart.setGeometry(QRect(110, 470, 141, 41))
-        font9 = QFont()
-        font9.setFamilies(["\u5fae\u8f6f\u96c5\u9ed1"])
-        font9.setPointSize(13)
-        font9.setBold(True)
-        self.restart.setFont(font9)
+        self.restart.setGeometry(QRect(20, 470, 311, 41))
+        self.restart.setFont(font)
         self.restart.setStyleSheet(
             "QPushButton\n"
             "{\n"
-            "background-color:rgb(200, 74, 76);\n"
+            "background-color: rgb(114,115,117);\n"
             "color:white;\n"
             "border-radius:5px;\n"
             "}\n"
             "QPushButton::hover{\n"
-            "background-color:rgb(170, 74, 76);\n"
+            "background-color: rgb(158,159,160);\n"
             "}\n"
             "\n"
             "QPushButton::pressed{\n"
-            "background-color:rgb(165, 54, 76);\n"
+            "background-color:rgb(91,92,95);\n"
             "}\n"
-            "                         "
+            ""
         )
         self.restart.setFlat(True)
-        self.radioButton = QRadioButton(self.centralwidget)
-        self.radioButton.setObjectName("radioButton")
-        self.radioButton.setGeometry(QRect(25, 440, 89, 16))
-        font10 = QFont()
-        font10.setFamilies(["\u5fae\u8f6f\u96c5\u9ed1"])
-        font10.setPointSize(11)
-        self.radioButton.setFont(font10)
         self.settings = QPushButton(self.centralwidget)
         self.settings.setObjectName("settings")
-        self.settings.setGeometry(QRect(280, 30, 30, 30))
+        self.settings.setGeometry(QRect(680, 470, 30, 30))
         self.settings.setStyleSheet(
             "QPushButton\n"
             "{\n"
@@ -405,19 +373,37 @@ class Ui_MainWindow(object):
             "QPushButton::pressed{\n"
             "background-color:rgb(91,92,95);\n"
             "}\n"
-            "                         "
+            ""
         )
         icon2 = QIcon()
         icon2.addFile(":/img/sq-setting.png", QSize(), QIcon.Normal, QIcon.Off)
         self.settings.setIcon(icon2)
+        self.notification_btn = QPushButton(self.centralwidget)
+        self.notification_btn.setObjectName("notification_btn")
+        self.notification_btn.setGeometry(QRect(310, 50, 21, 21))
+        self.notification_btn.setStyleSheet(
+            "QPushButton\n"
+            "{\n"
+            "background-color: rgba(255, 255, 255, 0);\n"
+            "border-image: url(:/img/notification.png);\n"
+            "}\n"
+            "QPushButton::hover{\n"
+            "border-image: url(:/img/notification_hover.png);\n"
+            "}\n"
+            "QPushButton::pressed{\n"
+            "border-image: url(:/img/notification_pressed.png);\n"
+            "}\n"
+            ""
+        )
+        self.notification_btn.setFlat(True)
         self.notification_frame = QFrame(self.centralwidget)
         self.notification_frame.setObjectName("notification_frame")
-        self.notification_frame.setGeometry(QRect(370, 30, 361, 101))
+        self.notification_frame.setGeometry(QRect(370, 30, 361, 121))
         self.notification_frame.setFrameShape(QFrame.StyledPanel)
         self.notification_frame.setFrameShadow(QFrame.Raised)
         self.label_2 = QLabel(self.notification_frame)
         self.label_2.setObjectName("label_2")
-        self.label_2.setGeometry(QRect(20, 10, 331, 91))
+        self.label_2.setGeometry(QRect(20, 10, 331, 111))
         self.label_2.setStyleSheet(
             "background-color: rgb(255, 255, 255);\n"
             "border-radius:5px;\n"
@@ -439,45 +425,52 @@ class Ui_MainWindow(object):
             "background-color: rgb(255, 0, 0,180);\n"
             "}\n"
             "\n"
-            "                              "
+            ""
         )
         self.notification_close.setIcon(icon)
         self.label_9 = QLabel(self.notification_frame)
         self.label_9.setObjectName("label_9")
         self.label_9.setGeometry(QRect(33, 20, 61, 21))
-        font11 = QFont()
-        font11.setFamilies(["\u5fae\u8f6f\u96c5\u9ed1"])
-        font11.setPointSize(12)
-        font11.setBold(True)
-        self.label_9.setFont(font11)
+        font10 = QFont()
+        font10.setFamilies(["\u5fae\u8f6f\u96c5\u9ed1"])
+        font10.setPointSize(12)
+        font10.setBold(True)
+        self.label_9.setFont(font10)
         self.plainTextEdit = QPlainTextEdit(self.notification_frame)
         self.plainTextEdit.setObjectName("plainTextEdit")
-        self.plainTextEdit.setGeometry(QRect(30, 40, 311, 41))
-        self.plainTextEdit.setFont(font2)
+        self.plainTextEdit.setGeometry(QRect(30, 40, 311, 71))
+        self.plainTextEdit.setFont(font3)
         self.plainTextEdit.setStyleSheet(
             "background-color: rgb(255, 255, 255,0);\n"
             "border:1px solid rgb(255, 255, 255, 0);\n"
-            "                              "
+            ""
         )
         self.plainTextEdit.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.plainTextEdit.setReadOnly(True)
         self.label_12 = QLabel(self.centralwidget)
         self.label_12.setObjectName("label_12")
-        self.label_12.setGeometry(QRect(390, 380, 321, 20))
-        self.label_12.setFont(font2)
+        self.label_12.setGeometry(QRect(390, 410, 321, 20))
+        self.label_12.setFont(font3)
         self.label_12.setStyleSheet("color: rgb(255, 255, 255);")
         self.label_12.setAlignment(Qt.AlignCenter)
         self.label_13 = QLabel(self.centralwidget)
         self.label_13.setObjectName("label_13")
-        self.label_13.setGeometry(QRect(390, 360, 321, 20))
-        self.label_13.setFont(font2)
+        self.label_13.setGeometry(QRect(390, 390, 321, 20))
+        self.label_13.setFont(font3)
         self.label_13.setStyleSheet("color: rgb(255, 255, 255);")
         self.label_13.setAlignment(Qt.AlignCenter)
         self.label_14 = QLabel(self.centralwidget)
         self.label_14.setObjectName("label_14")
-        self.label_14.setGeometry(QRect(390, 400, 331, 20))
-        self.label_14.setFont(font2)
+        self.label_14.setGeometry(QRect(390, 430, 331, 20))
+        self.label_14.setFont(font3)
         self.label_14.setStyleSheet("color: rgb(255, 255, 255);")
         self.label_14.setAlignment(Qt.AlignCenter)
+        self.label_15 = QLabel(self.centralwidget)
+        self.label_15.setObjectName("label_15")
+        self.label_15.setGeometry(QRect(390, 370, 321, 20))
+        self.label_15.setFont(font3)
+        self.label_15.setStyleSheet("color: rgb(255, 255, 255);")
+        self.label_15.setAlignment(Qt.AlignCenter)
         MainWindow.setCentralWidget(self.centralwidget)
         self.label_3.raise_()
         self.label_4.raise_()
@@ -486,27 +479,29 @@ class Ui_MainWindow(object):
         self.program_title.raise_()
         self.label_5.raise_()
         self.options_widget.raise_()
+        self.smtx.raise_()
         self.label.raise_()
         self.label_6.raise_()
         self.label_7.raise_()
         self.label_8.raise_()
         self.restart.raise_()
-        self.radioButton.raise_()
         self.settings.raise_()
+        self.notification_btn.raise_()
         self.notification_frame.raise_()
         self.label_12.raise_()
         self.label_13.raise_()
         self.label_14.raise_()
-        self.exitApp.raise_()
+        self.close_window.raise_()
         self.minimize.raise_()
+        self.label_15.raise_()
         self.about_frame.raise_()
 
         self.retranslateUi(MainWindow)
         self.about_close.clicked.connect(self.about_frame.hide)
-        self.exitApp.clicked.connect(MainWindow.close)
+        self.close_window.clicked.connect(MainWindow.close)
         self.minimize.clicked.connect(MainWindow.showMinimized)
-        self.radioButton.toggled.connect(self.restart.setHidden)
         self.settings.clicked.connect(self.about_frame.show)
+        self.notification_btn.clicked.connect(self.notification_frame.show)
         self.notification_close.clicked.connect(self.notification_frame.hide)
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -517,12 +512,15 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(
             QCoreApplication.translate("MainWindow", "MainWindow", None)
         )
+        self.smtx.setText(
+            QCoreApplication.translate(
+                "MainWindow", "\u51c0\u5316\u5ba2\u6237\u7aef", None
+            )
+        )
         self.label_3.setText("")
         self.label_4.setText("")
         self.current_operation.setText(
-            QCoreApplication.translate(
-                "MainWindow", "\u6b63\u5728\u4e0b\u8f7d\uff1a1/6", None
-            )
+            QCoreApplication.translate("MainWindow", "下载进度", None)
         )
         self.program_title.setText(
             QCoreApplication.translate(
@@ -550,13 +548,15 @@ class Ui_MainWindow(object):
         self.manual_operation.setText(
             QCoreApplication.translate("MainWindow", "\u624b\u52a8\u9009\u62e9", None)
         )
-        self.label_11.setText(QCoreApplication.translate("MainWindow", "关于", None))
+        self.label_11.setText(
+            QCoreApplication.translate("MainWindow", "\u5173\u4e8e", None)
+        )
         self.plainTextEdit_2.setPlainText(
             QCoreApplication.translate(
                 "MainWindow",
-                "所有修改方法思路均由B站 @ZYXeeker 原创!\n"
-                "本工具由 @艾斯托维亚 提供技术支持!\n"
-                "只作个人学习研究用途公开,不承担任何责任。",
+                "\u6240\u6709\u4fee\u6539\u65b9\u6cd5\u601d\u8def\u5747\u7531B\u7ad9 @ZYXeeker \u539f\u521b!\n"
+                "\u672c\u5de5\u5177\u7531 @\u827e\u65af\u6258\u7ef4\u4e9a \u63d0\u4f9b\u6280\u672f\u652f\u6301!\n"
+                "\u53ea\u4f5c\u4e2a\u4eba\u5b66\u4e60\u7814\u7a76\u7528\u9014\u516c\u5f00,\u4e0d\u627f\u62c5\u4efb\u4f55\u8d23\u4efb\u3002",
                 None,
             )
         )
@@ -565,15 +565,17 @@ class Ui_MainWindow(object):
                 "MainWindow", "\u91cd\u8f7d\u5ba2\u6237\u7aef", None
             )
         )
-        self.radioButton.setText(
-            QCoreApplication.translate("MainWindow", "\u9ad8\u7ea7\u9009\u9879", None)
-        )
         # if QT_CONFIG(tooltip)
         self.settings.setToolTip(
             QCoreApplication.translate("MainWindow", "\u8bbe\u7f6e", None)
         )
         # endif // QT_CONFIG(tooltip)
         self.settings.setText("")
+        # if QT_CONFIG(tooltip)
+        self.notification_btn.setToolTip(
+            QCoreApplication.translate("MainWindow", "\u901a\u77e5", None)
+        )
+        # endif // QT_CONFIG(tooltip)
         self.label_2.setText("")
         self.label_9.setText(
             QCoreApplication.translate("MainWindow", "\u63d0\u9192", None)
@@ -581,50 +583,33 @@ class Ui_MainWindow(object):
         self.plainTextEdit.setPlainText(
             QCoreApplication.translate("MainWindow", "this is a notice", None)
         )
-        # 设置plainTextEdit 不可编辑
-        self.plainTextEdit.setReadOnly(True)
         self.label_12.setText(
             QCoreApplication.translate(
                 "MainWindow",
-                "所有修改方法思路均由B站 @ZYXeeker 原创!",
+                '<html><head/><body><p>\u6240\u6709\u4fee\u6539\u65b9\u6cd5\u601d\u8def\u5747\u7531B\u7ad9 <a href="https://space.bilibili.com/186789482"><span style=" text-decoration: underline; color:#00ff7f;">@ZYXeeker</span></a> \u539f\u521b!</p></body></html>',
                 None,
             )
         )
         self.label_13.setText(
             QCoreApplication.translate(
                 "MainWindow",
-                "本工具由 @艾斯托维亚 提供技术支持",
+                '<html><head/><body><p>\u672c\u5de5\u5177\u7531 <a href="https://space.bilibili.com/86332521"><span style=" text-decoration: underline; color:#00ff7f;">@\u827e\u65af\u6258\u7ef4\u4e9a</span></a> \u63d0\u4f9b\u6280\u672f\u652f\u6301</p></body></html>',
                 None,
             )
         )
         self.label_14.setText(
             QCoreApplication.translate(
                 "MainWindow",
-                "只作个人学习研究用途公开,不承担任何责任！",
+                "\u53ea\u4f5c\u4e2a\u4eba\u5b66\u4e60\u7814\u7a76\u7528\u9014\u516c\u5f00,\u4e0d\u627f\u62c5\u4efb\u4f55\u8d23\u4efb\uff01",
+                None,
+            )
+        )
+        self.label_15.setText(
+            QCoreApplication.translate(
+                "MainWindow",
+                '\u5f53\u524d\u652f\u6301\u7248\u672c\uff1a<font color="#FF0000">12.7</font>',
                 None,
             )
         )
 
     # retranslateUi
-
-    def check_update(self):
-        from json import loads
-
-        self.server_data = None
-        request = QNetworkRequest(
-            QUrl(
-                "https://ghproxy.fsofso.com/https://github.com/ASTWY/LCUFixTool/blob/dev/data.json"
-            )
-        )
-        response = QNetworkAccessManager(QCoreApplication.instance()).get(request)
-
-        # 回调函数
-        def call_back():
-            # 把服务器返回的数据转换成字符串
-            data = response.readAll().data().decode("utf-8")
-            self.server_data = Server_Info(**loads(data))
-            self.options_widget.reload(self.server_data.data)
-            if self.server_data.msgContorl:
-                self.plainTextEdit.setPlainText(self.server_data.msg)
-
-        response.finished.connect(call_back)

@@ -13,6 +13,7 @@ pyinstaller = "^5.0"
 logger = "^1.4"
 pip = "^22.0.4"
 pypiwin32 = "^223"
+psutil = "^5.9.0"
 
 [tool.poetry.dev-dependencies]
 black = {version = "^22.3.0", allow-prereleases = true}

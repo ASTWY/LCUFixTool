@@ -2,7 +2,6 @@ class WAD_Info:
     def __init__(self, **kwargs):
         self.name: str = kwargs.get("name")
         self.path: str = kwargs.get("path")
-        self.class_: str = kwargs.get("class")
         self.note: str = kwargs.get("note")
         self.md5: str = kwargs.get("md5")
         self.type: str = kwargs.get("type")
@@ -18,15 +17,11 @@ class Server_Info:
         self.host: str = kwargs.get("host")
         self.msgContorl: bool = kwargs.get("msgContorl")
         self.msg: str = kwargs.get("msg")
-        # 将传入的数据中的data转化为元素类型为WADinfo的列表
-        self.data: list[WAD_Info] = [WAD_Info(**item) for item in kwargs.get("data")]
+        # 传入参数data中的项的子项转化为WAD_Info对象
+        self.data: dict = {}
+        for item in kwargs.get("data"):
+            self.data[item] = [
+                WAD_Info(**item) for item in kwargs.get("data").get(item)
+            ]
 
 
-if __name__ == "__main__":
-    import httpx
-
-    resp = httpx.get("https://gitee.com/ASTWY/lcufix-tool/raw/master/version.json")
-    if resp.status_code == 200:
-        info = Server_Info(**resp.json())
-        print(info.data[0].name)
-        print(info.ver)
