@@ -1,8 +1,8 @@
 {
-    "ver": "12.7",
+    "ver": "12.8",
     "host": "https://ghproxy.com/https://raw.githubusercontent.com/ASTWY/LCUFixTool/dev/wad/12.7.1/",
     "msgContorl": true,
-    "msg": "当前工具支持版本：12.7\n如遇到下载缓慢问题，请切换网络环境尝试！\n无视隐藏生涯功能因存在争议不再提供支持\n强烈推荐LeagueTavern符文助手官网：Mitay.net\n简洁版特效小工具正在测试中，如有问题请加LanPlanet A11_②群（955923860）反馈BUG！\n请务必在关闭客户端后使用",
+    "msg": "如遇到下载缓慢问题，请切换网络环境尝试！\n强烈推荐LeagueTavern符文助手官网：Mitay.net\n简洁版特效小工具正在测试中，如有问题请加LanPlanet A11_②群（955923860）反馈BUG！",
     "data": {
         "恢复阉割动画": [
             {
