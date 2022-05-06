@@ -113,7 +113,7 @@ class LCUFixTool(QMainWindow, Ui_MainWindow):
 
         self.server_data = None
         request = QNetworkRequest(
-            QUrl("https://raw.githubusercontent.com/ASTWY/LCUFixTool/dev/data.json")
+            QUrl("https://ghproxy.com/https://raw.githubusercontent.com/ASTWY/LCUFixTool/dev/data.json")
         )
         response = QNetworkAccessManager(QCoreApplication.instance()).get(request)
 
