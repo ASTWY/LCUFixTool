@@ -1,26 +1,59 @@
 # -*- coding: utf-8 -*-
 
+################################################################################
+## Form generated from reading UI file 'LCU.ui'
+##
+## Created by: Qt User Interface Compiler version 6.3.0
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
+
 from PySide6.QtCore import (
     QCoreApplication,
+    QDate,
+    QDateTime,
+    QLocale,
     QMetaObject,
+    QObject,
+    QPoint,
     QRect,
     QSize,
+    QTime,
+    QUrl,
     Qt,
 )
 from PySide6.QtGui import (
+    QBrush,
+    QColor,
+    QConicalGradient,
+    QCursor,
     QFont,
+    QFontDatabase,
+    QGradient,
     QIcon,
+    QImage,
+    QKeySequence,
+    QLinearGradient,
+    QPainter,
+    QPalette,
     QPixmap,
+    QRadialGradient,
+    QTransform,
 )
 from PySide6.QtWidgets import (
     QAbstractScrollArea,
+    QApplication,
     QFrame,
     QLabel,
     QLineEdit,
     QListWidget,
+    QListWidgetItem,
+    QMainWindow,
     QPlainTextEdit,
     QProgressBar,
     QPushButton,
+    QSizePolicy,
+    QTextEdit,
     QWidget,
 )
 import lcu_rc
@@ -404,7 +437,7 @@ class Ui_MainWindow(object):
         font10.setPointSize(12)
         font10.setBold(True)
         self.label_9.setFont(font10)
-        self.plainTextEdit = QPlainTextEdit(self.notification_frame)
+        self.plainTextEdit = QTextEdit(self.notification_frame)
         self.plainTextEdit.setObjectName("plainTextEdit")
         self.plainTextEdit.setGeometry(QRect(30, 40, 311, 71))
         self.plainTextEdit.setFont(font3)
@@ -440,6 +473,7 @@ class Ui_MainWindow(object):
         self.label_15.setStyleSheet("color: rgb(255, 255, 255);")
         self.label_15.setAlignment(Qt.AlignCenter)
         MainWindow.setCentralWidget(self.centralwidget)
+        self.about_frame.raise_()
         self.label_3.raise_()
         self.label_4.raise_()
         self.progressBar.raise_()
@@ -462,7 +496,6 @@ class Ui_MainWindow(object):
         self.close_window.raise_()
         self.minimize.raise_()
         self.label_15.raise_()
-        self.about_frame.raise_()
 
         self.retranslateUi(MainWindow)
         self.about_close.clicked.connect(self.about_frame.hide)
@@ -488,7 +521,9 @@ class Ui_MainWindow(object):
         self.label_3.setText("")
         self.label_4.setText("")
         self.current_operation.setText(
-            QCoreApplication.translate("MainWindow", "下载进度", None)
+            QCoreApplication.translate(
+                "MainWindow", "\u6b63\u5728\u4e0b\u8f7d\uff1a", None
+            )
         )
         self.program_title.setText(
             QCoreApplication.translate(
@@ -547,9 +582,6 @@ class Ui_MainWindow(object):
         self.label_2.setText("")
         self.label_9.setText(
             QCoreApplication.translate("MainWindow", "\u63d0\u9192", None)
-        )
-        self.plainTextEdit.setPlainText(
-            QCoreApplication.translate("MainWindow", "this is a notice", None)
         )
         self.label_12.setText(
             QCoreApplication.translate(

@@ -10,7 +10,6 @@ from PySide6.QtWidgets import (
     QMainWindow,
     QMessageBox,
 )
-
 from lcu_ui2 import Ui_MainWindow
 from utils import *
 
@@ -88,7 +87,7 @@ class LCUFixTool(QMainWindow, Ui_MainWindow):
                             wad_path,
                             progressBar: QProgressBar,
                             *args,
-                            **kwargs
+                            **kwargs,
                         ):
                             super(DownloadThread, self).__init__(*args, **kwargs)
                             self.uri = uri
@@ -113,7 +112,9 @@ class LCUFixTool(QMainWindow, Ui_MainWindow):
 
         self.server_data = None
         request = QNetworkRequest(
-            QUrl("https://ghproxy.com/https://raw.githubusercontent.com/ASTWY/LCUFixTool/dev/data.json")
+            QUrl(
+                "https://ghproxy.com/https://raw.githubusercontent.com/ASTWY/LCUFixTool/dev/data.json"
+            )
         )
         response = QNetworkAccessManager(QCoreApplication.instance()).get(request)
 
@@ -126,7 +127,12 @@ class LCUFixTool(QMainWindow, Ui_MainWindow):
             self.server_data = Server_Info(**loads(data))
             self.reload()
             if self.server_data.msgContorl:
-                self.plainTextEdit.setPlainText(self.server_data.msg)
+                self.plainTextEdit.setHtml(self.server_data.msg)
+            else:
+                self.plainTextEdit.setHidden(True)
+            self.label_15.setText(
+                f'当前支持版本：<font color="#FF0000">{self.server_data.ver}</font>'
+            )
 
         response.finished.connect(call_back)
 
