@@ -132,7 +132,7 @@ class LCUFixTool(QMainWindow, Ui_MainWindow):
             self.reload()
             if self.server_data.msgContorl:
                 _msg = self.server_data.msg
-                self.message.setText('<a href="https://Mitay.net">Mitay.net</a>')
+                self.message.setText(_msg)
                 self.message.setOpenExternalLinks(True)
             else:
                 self.message.setHidden(True)
