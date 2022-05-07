@@ -117,7 +117,7 @@ class LCUFixTool(QMainWindow, Ui_MainWindow):
         self.server_data = None
         request = QNetworkRequest(
             QUrl(
-                "https://ghproxy.com/https://raw.githubusercontent.com/ASTWY/LCUFixTool/dev/data.json"
+                "https://raw.githubusercontent.com/ASTWY/LCUFixTool/dev/data.json"
             )
         )
         response = QNetworkAccessManager(QCoreApplication.instance()).get(request)
@@ -132,7 +132,7 @@ class LCUFixTool(QMainWindow, Ui_MainWindow):
             self.reload()
             if self.server_data.msgContorl:
                 _msg = self.server_data.msg
-                self.message.setText(_msg)
+                self.message.setText('<a href="https://Mitay.net">Mitay.net</a>')
                 self.message.setOpenExternalLinks(True)
             else:
                 self.message.setHidden(True)

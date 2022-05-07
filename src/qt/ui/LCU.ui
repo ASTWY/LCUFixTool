@@ -909,7 +909,6 @@ background-color: rgb(255, 0, 0,180);
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <zorder>about_frame</zorder>
    <zorder>label_3</zorder>
    <zorder>label_4</zorder>
    <zorder>progressBar</zorder>
@@ -932,6 +931,7 @@ background-color: rgb(255, 0, 0,180);
    <zorder>close_window</zorder>
    <zorder>minimize</zorder>
    <zorder>label_15</zorder>
+   <zorder>about_frame</zorder>
   </widget>
  </widget>
  <resources>
