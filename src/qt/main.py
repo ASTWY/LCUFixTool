@@ -1,7 +1,7 @@
 import sys
 
 import psutil
-from PySide6.QtCore import QCoreApplication, Qt, QThread, QUrl
+from PySide6.QtCore import QCoreApplication, Qt, QThread, QUrl, QPoint
 from PySide6.QtNetwork import QNetworkAccessManager, QNetworkRequest
 from PySide6.QtWidgets import (
     QApplication,
@@ -10,7 +10,7 @@ from PySide6.QtWidgets import (
     QMainWindow,
     QMessageBox,
 )
-from lcu_ui2 import Ui_MainWindow
+from lcu_ui import Ui_MainWindow
 from utils import *
 
 
@@ -22,6 +22,10 @@ class LCUFixTool(QMainWindow, Ui_MainWindow):
         super(LCUFixTool, self).__init__(*args, **kwargs)
 
         self.setupUi(self)  # 初始化ui
+        # 隐藏系统标题栏
+        self.setWindowFlags(Qt.FramelessWindowHint)
+        # 窗口拖动功能实现
+        self.m_last_pos: QPoint = None
         # 检查本地配置
         self.check_local()
         # 进度条置零
@@ -127,9 +131,11 @@ class LCUFixTool(QMainWindow, Ui_MainWindow):
             self.server_data = Server_Info(**loads(data))
             self.reload()
             if self.server_data.msgContorl:
-                self.plainTextEdit.setHtml(self.server_data.msg)
+                _msg = self.server_data.msg
+                self.message.setText("<a href=\"https://www.baidu.com\">百度一下</a>")
+                self.message.setOpenExternalLinks(True)
             else:
-                self.plainTextEdit.setHidden(True)
+                self.message.setHidden(True)
             self.label_15.setText(
                 f'当前支持版本：<font color="#FF0000">{self.server_data.ver}</font>'
             )
@@ -235,6 +241,18 @@ class LCUFixTool(QMainWindow, Ui_MainWindow):
                     QCoreApplication.translate("MainWindow", "提示", None),
                     QCoreApplication.translate("MainWindow", "客户端已净化完成，请重新登录", None),
                 )
+
+    # 重写mousePressEvent、mouseMoveEvent函数,以实现窗口拖动
+    def mousePressEvent(self, event):
+        self.m_last_pos = event.globalPosition().toPoint()
+
+    def mouseMoveEvent(self, event):
+        p = event.globalPosition().toPoint()
+        self.move(
+            self.x() + (p.x() - self.m_last_pos.x()),
+            self.y() + (p.y() - self.m_last_pos.y()),
+        )
+        self.m_last_pos = event.globalPosition().toPoint()
 
 
 if __name__ == "__main__":  # 程序的入口
