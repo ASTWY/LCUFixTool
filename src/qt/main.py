@@ -256,7 +256,7 @@ class LCUFixTool(QMainWindow, Ui_MainWindow):
 
 
 if __name__ == "__main__":  # 程序的入口
-    print("<a href=\"https://www.baidu.com\">百度一下</a>")
+    print('<a href="https://www.baidu.com">百度一下</a>')
     try:
         app = LCUFixTool()
         app.show()
