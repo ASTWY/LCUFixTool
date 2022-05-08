@@ -11,7 +11,7 @@ class WAD_Info:
 
 
 # 服务器数据
-class Server_Info:
+class Server_Info(object):
     def __init__(self, **kwargs):
         self.ver: str = kwargs.get("ver")
         self.host: str = kwargs.get("host")
@@ -23,5 +23,3 @@ class Server_Info:
             self.data[item] = [
                 WAD_Info(**item) for item in kwargs.get("data").get(item)
             ]
-
-

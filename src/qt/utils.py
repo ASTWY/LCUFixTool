@@ -1,9 +1,9 @@
 from hashlib import md5
 from json import dump, load
-from pathlib import Path, PosixPath
+from pathlib import Path
+from turtle import st
 from typing import Union
 
-import psutil
 from httpx import get, stream
 from PySide6.QtWidgets import QProgressBar
 from win32api import HIWORD, LOWORD, GetFileVersionInfo
@@ -90,6 +90,9 @@ def get_lol_wad_status(lol_path: str, wad_info: WAD_Info) -> bool:
                 set_lol_wad_status(lol_path, wad_info, False)
             except:
                 return False
+    else:
+        # 设置wad模块安装状态为False
+        set_lol_wad_status(lol_path, wad_info, False)
     if cfg_path.exists():
         with cfg_path.open("r", encoding="utf-8") as f:
             cfg_data = load(f)
@@ -139,6 +142,7 @@ def download_wad(url: str, file_path: str, progress_bar: QProgressBar) -> bool:
     """
     if not url or not file_path:
         return False
+    file_path = Path(file_path)
     try:
         with stream("GET", url) as response:
             if response.status_code == 200:
@@ -156,7 +160,28 @@ def download_wad(url: str, file_path: str, progress_bar: QProgressBar) -> bool:
                             progress_bar.setValue(f.tell())
             return True
     except Exception as e:
+        try:
+            file_path.unlink()
+        except:
+            pass
         return False
+
+
+# 获取用户数据目录
+def get_user_data_path(path: str = None) -> Path:
+    """
+    获取用户数据目录
+    :return: 用户数据目录
+    """
+    data_path = Path("~/Documents/LCUFixTool").expanduser()
+    if path:
+        data_path = data_path.joinpath(path)
+    if not data_path.exists():
+        try:
+            data_path.parent.mkdir(parents=True)
+        except:
+            pass
+    return data_path
 
 
 if __name__ == "__main__":

@@ -20,23 +20,16 @@
                 "type": "add"
             }
         ],
-        "恢复阉割功能": [
+        "外服式导航栏图标": [
             {
-                "name": "rcp-fe-lol-collections.wad",
-                "path": "LeagueClient/Plugins/rcp-fe-lol-collections/description.json",
-                "note": "开启藏品图标和好友聊天悬浮窗口",
-                "md5": "3177A8F4B4B2632A3311AAD1AA516C02",
-                "type": "add"
-            },
-            {
-                "name": "rcp-fe-lol-social.wad",
-                "path": "LeagueClient/Plugins/rcp-fe-lol-social/description.json",
-                "note": "开启藏品图标和好友聊天悬浮窗口",
-                "md5": "2E9329F70D5E894EB860F31B545CFC83",
+                "name": "rcp-fe-lol-navigation.wad",
+                "path": "LeagueClient/Plugins/rcp-fe-lol-navigation/description.json",
+                "note": "导航栏显示模式切换为外服简洁好看的纯图标样式",
+                "md5": "1721B62F2629AF83098C4E5F416EBDCB",
                 "type": "add"
             }
         ],
-        "强制开启新版对局结算页面": [
+        "开启新版对局结算页面": [
             {
                 "name": "rcp-fe-lol-postgame.wad",
                 "path": "LeagueClient/Plugins/rcp-fe-lol-postgame/description.json",
@@ -45,12 +38,12 @@
                 "type": "add"
             }
         ],
-        "外服式导航栏图标": [
+        "开启好友聊天悬浮窗口": [
             {
-                "name": "rcp-fe-lol-navigation.wad",
-                "path": "LeagueClient/Plugins/rcp-fe-lol-navigation/description.json",
-                "note": "导航栏显示模式切换为外服简洁好看的纯图标样式",
-                "md5": "1721B62F2629AF83098C4E5F416EBDCB",
+                "name": "rcp-fe-lol-social.wad",
+                "path": "LeagueClient/Plugins/rcp-fe-lol-social/description.json",
+                "note": "使好友聊天窗口与客户端自由分离使用",
+                "md5": "2E9329F70D5E894EB860F31B545CFC83",
                 "type": "add"
             }
         ],
