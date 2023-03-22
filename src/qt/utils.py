@@ -1,14 +1,12 @@
+from ctypes import windll
 from hashlib import md5
 from json import dump, load
 from pathlib import Path
-from turtle import st
 from typing import Union
 
-from httpx import get, stream
+from model import WAD_Info
 from PySide6.QtWidgets import QProgressBar
 from win32api import HIWORD, LOWORD, GetFileVersionInfo
-
-from model import Server_Info, WAD_Info
 
 
 # 计算文件MD5
@@ -24,13 +22,16 @@ def get_md5(file_path: str) -> str:
     return d5.hexdigest().upper()
 
 
-# 判断是否以管理员身份运行
 def is_admin() -> bool:
+    """
+    WindowsAPI判断是否以管理员身份运行
+    """
     try:
-        open("//./PHYSICALDRIVE0", "r")
-        return True
-    except:
+        return windll.shell32.IsUserAnAdmin()
+    except Exception:
         return False
+    # open("//./PHYSICALDRIVE0", "r")
+    # return True
 
 
 # 检查LOL路径是否正确
@@ -41,23 +42,6 @@ def check_lol_path(lol_path: str) -> Union[bool, str]:
     elif _path.joinpath("League of Legends.exe").exists():
         return _path.parent.__str__()
     return False
-
-
-# 获取云端数据
-def get_server_info(server_url: str) -> Union[Server_Info, bool]:
-    """
-    获取云端数据
-    :param server_url: 云端数据的url
-    :return: 云端数据
-    """
-    if not server_url:
-        return False
-    try:
-        resp = get(server_url)
-        if resp.status_code == 200:
-            return Server_Info(**resp.json())
-    except:
-        return False
 
 
 # 获取LOL的版本号,返回第一个点前后的两位数字
@@ -73,7 +57,7 @@ def get_lol_version(lol_path: str) -> Union[str, bool]:
         version_info = GetFileVersionInfo(lol_path, "\\")
         version = version_info["FileVersionMS"]
         return f"{HIWORD(version)}.{LOWORD(version)}"
-    except:
+    except Exception:
         return False
 
 
@@ -88,7 +72,7 @@ def get_lol_wad_status(lol_path: str, wad_info: WAD_Info) -> bool:
                 wad_path.unlink()
                 # 设置wad模块安装状态为False
                 set_lol_wad_status(lol_path, wad_info, False)
-            except:
+            except Exception:
                 return False
     else:
         # 设置wad模块安装状态为False
@@ -159,10 +143,10 @@ def download_wad(url: str, file_path: str, progress_bar: QProgressBar) -> bool:
                             # 设置进度条的当前值
                             progress_bar.setValue(f.tell())
             return True
-    except Exception as e:
+    except Exception:
         try:
             file_path.unlink()
-        except:
+        except Exception:
             pass
         return False
 
@@ -179,25 +163,6 @@ def get_user_data_path(path: str = None) -> Path:
     if not data_path.exists():
         try:
             data_path.parent.mkdir(parents=True)
-        except:
+        except Exception:
             pass
     return data_path
-
-
-if __name__ == "__main__":
-    from httpx import get
-
-    lol_path = "E:\Game\Riot Games\CN"
-    resp = get(
-        "https://ghproxy.fsofso.com/https://github.com/ASTWY/LCUFixTool/blob/dev/data.json"
-    )
-    server_info = Server_Info(**resp.json())
-    for wad_info in server_info.data:
-        print(wad_info)
-        for item in server_info.data[wad_info]:
-            print(f"{item.name}:{get_lol_wad_status(lol_path, item)}")
-            set_lol_wad_status(lol_path, item, False)
-            print(f"{item.name}:{get_lol_wad_status(lol_path, item)}")
-            set_lol_wad_status(lol_path, item, True)
-            print(f"{item.name}:{get_lol_wad_status(lol_path, item)}")
-            pass

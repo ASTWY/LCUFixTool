@@ -1,74 +1,27 @@
+import json
 import sys
 from pathlib import Path
 
 import psutil
-from httpx import Client
-from loguru import logger
-from PySide6.QtCore import QCoreApplication, QPoint, Qt, QRunnable, QThreadPool
+from lcu_ui import Ui_MainWindow
+from model import Server_Info, WAD_Info
+from PySide6.QtNetwork import QNetworkAccessManager, QNetworkReply, QNetworkRequest
+from PySide6.QtCore import QCoreApplication, QPoint, Qt, QUrl
 from PySide6.QtWidgets import (
     QApplication,
     QFileDialog,
-    QLabel,
     QListWidgetItem,
     QMainWindow,
     QMessageBox,
 )
-
-from lcu_ui import Ui_MainWindow
-from utils import *
-
-# 创建全局日志对象
-logger.add(
-    str(get_user_data_path("log")) + "/log_{time}.log",
-    format="{time:YYYY-MM-DD at HH:mm:ss} | {level} | {message}",
-    level="INFO",
-    encoding="utf-8",
+from utils import (
+    check_lol_path,
+    get_lol_wad_status,
+    get_user_data_path,
+    is_admin,
+    set_lol_wad_status,
 )
-
-
-class DownloadThread(QRunnable):
-    def __init__(
-        self,
-        uri: str,
-        file_path,
-        wad_info,
-        lol_path,
-        progressBar: QProgressBar,
-        progress_label: QLabel,
-        callback,
-        *args,
-        **kwargs,
-    ):
-        super(DownloadThread, self).__init__(*args, **kwargs)
-        self.uri = uri
-        self.wad_path = file_path
-        self.wad_info = wad_info
-        self.lol_path = lol_path
-        self.progressBar = progressBar
-        self.progress_label = progress_label
-        self.callback = callback
-
-    def run(self):
-        # 获取线程池中的活动线程数量
-        self.progress_label.setVisible(True)
-        # 刷新界面
-        QCoreApplication.processEvents()
-        down_state = download_wad(self.uri, self.wad_path, self.progressBar)
-        if down_state:
-            # 如果线程池为空，则隐藏进度条
-            set_lol_wad_status(self.lol_path, self.wad_info, True)
-        else:
-            logger.error(f"下载失败，{self.wad_info.name}")
-            QMessageBox.warning(
-                self,
-                "错误",
-                f"下载失败，{self.wad_info.name}",
-                QMessageBox.Ok,
-            )
-        self.progressBar.setValue(0)
-        self.progress_label.setVisible(False)
-        self.callback()
-        logger.info(f"下载完成，{self.wad_info.name}")
+from download import DownloadTask, DownloadQueue, DownloadThread
 
 
 class LCUFixTool(QMainWindow, Ui_MainWindow):
@@ -78,11 +31,12 @@ class LCUFixTool(QMainWindow, Ui_MainWindow):
         self.app = QApplication(sys.argv)
         super(LCUFixTool, self).__init__(*args, **kwargs)
 
-        self.setupUi(self)  # 初始化ui
+        # 初始化ui
+        self.setupUi(self)
         # 隐藏系统标题栏
         self.setWindowFlags(Qt.FramelessWindowHint)
-        # 隐藏进度条标题
-        self.current_operation.setVisible(False)
+        # 进度条标签隐藏
+        self.current_operation.setText("")
         # 超链接设置
         self.label_12.setOpenExternalLinks(True)
         self.label_13.setOpenExternalLinks(True)
@@ -92,6 +46,8 @@ class LCUFixTool(QMainWindow, Ui_MainWindow):
         self.check_local()
         # 进度条置零
         self.progressBar.setValue(0)
+        # 隐藏进度条
+        self.progressBar.setVisible(False)
         # 选择目录按钮事件绑定
         self.manual_operation.clicked.connect(self.select_path)
         # 功能列表点击事件绑定
@@ -100,20 +56,20 @@ class LCUFixTool(QMainWindow, Ui_MainWindow):
         self.restart.clicked.connect(self.reload_client)
         # 净化客户端点击事件绑定
         self.smtx.clicked.connect(self.clean_client)
+        # 初始化网络请求
+        self.client = QNetworkAccessManager()
+        # 初始化下载队列
+        self.downloadQueue = DownloadQueue()
+        # 初始化WAD列表
+        self.wadQueue: list[WAD_Info] = []
         # 检查更新
         self.check_update()
-        # 创建一个下载线程池，但只能同时执行1个线程
-        self.download_pool = QThreadPool()
-        self.download_pool.setMaxThreadCount(1)
 
     # 检查本地配置
     def check_local(self):
-        import json
 
-        logger.info("检查本地配置")
         cfg_file = get_user_data_path() / "config.json"
         if cfg_file.exists():
-            logger.info("载入本地配置")
             with cfg_file.open("r") as f:
                 config = json.load(f)
             self.lol_path = config["lol"]
@@ -122,7 +78,6 @@ class LCUFixTool(QMainWindow, Ui_MainWindow):
 
     # 重载功能列表
     def reload(self):
-        logger.info("重载功能列表")
         if self.lol_path is None:
             return
         self.options_widget.clear()
@@ -149,22 +104,18 @@ class LCUFixTool(QMainWindow, Ui_MainWindow):
         else:
             for item in self.server_data.data[item.text()]:
                 wad_path = Path(self.lol_path, item.path).parent / item.name
-                thread: DownloadThread = None
                 if not wad_path.exists():
                     uri = self.server_data.host + item.name
-                    logger.info(f"开始下载{item.name}")
-                    # 创建一个下载线程
-                    thread = DownloadThread(
-                        uri,
-                        wad_path,
-                        item,
-                        self.lol_path,
-                        self.progressBar,
-                        self.current_operation,
-                        self.reload,
-                    )
-                    # 将线程加入线程池
-                    self.download_pool.start(thread)
+                    self.wadQueue.append(item)
+                    self.downloadQueue.add_task(DownloadTask(uri, wad_path))
+                    self.current_operation.setText("即将开始下载")
+                    self.progressBar.setVisible(True)  # 显示进度条
+                    self.progressBar.setValue(0)  # 进度条置零
+                    if hasattr(self, "downloadThread"):
+                        if not self.downloadThread.isRunning():
+                            self.downloadThread.start()
+                    else:
+                        self.start_download()
                 else:
                     set_lol_wad_status(self.lol_path, item, True)
         self.reload()
@@ -172,45 +123,17 @@ class LCUFixTool(QMainWindow, Ui_MainWindow):
     # 检查更新
     def check_update(self):
         self.server_data = None
-        # 用QnetworkAccessManager来发起请求
-        # manager = QNetworkAccessManager()
-        # # 发起请求
-        # request = QNetworkRequest(
-        #     QUrl(
-        #         "https://raw.githubusercontent.com/LCU-Team/LCUFixTool/master/config.json"
-        #     )
-        # )
-        # manager.get(request)
+        # 获取服务器数据 "https://gitee.com/ASTWY/lcufix-tool/raw/master/version_new"
+        request = QNetworkRequest(
+            QUrl("https://gitee.com/ASTWY/lcufix-tool/raw/master/version_new")
+        )
+        response = self.client.get(request)
+        self.current_operation.setText("正在检查更新")
 
-        # # 回调函数
-        # def call_back():
-        #     # 把服务器返回的数据转换成字符串
-        #     data = request.readAll().data().decode("utf-8")
-        #     if data == "":
-        #         raise "获取云端数据失败"
-        #     self.server_data = Server_Info(**loads(data))
-        #     self.reload()
-        #     if self.server_data.msgContorl:
-        #         _msg = self.server_data.msg
-        #         self.message.setText(_msg)
-        #         self.message.setOpenExternalLinks(True)
-        #     else:
-        #         self.message.setHidden(True)
-        #     self.label_15.setText(
-        #         f'当前支持版本：<font color="#FF0000">{self.server_data.ver}</font>'
-        #     )
-
-        # # 请求完成后的信号
-        # manager.finished.connect(call_back)
-        logger.info("获取云端数据")
-        client = Client(timeout=5, verify=False)
-        try:
-            # 获取服务器数据
-            response = client.get(
-                "https://raw.githubusercontent.com/ASTWY/LCUFixTool/dev/data.json"
-            )
-            if response.status_code == 200:
-                self.server_data = Server_Info(**response.json())
+        def callback():
+            self.current_operation.setText("")
+            if response.error() == QNetworkReply.NoError:
+                self.server_data = Server_Info(**json.loads(response.readAll().data()))
                 self.reload()
                 if self.server_data.msgContorl:
                     _msg = self.server_data.msg
@@ -231,8 +154,9 @@ class LCUFixTool(QMainWindow, Ui_MainWindow):
                 )
                 # 退出程序
                 sys.exit(0)
-        except Exception as e:
-            logger.error(e)
+
+        # 连接信号槽
+        response.finished.connect(callback)
 
     # 开启一个目录选择窗口并获取选择的目录路径作为全局lol_path
     def select_path(self):
@@ -254,16 +178,13 @@ class LCUFixTool(QMainWindow, Ui_MainWindow):
                     config = {"lol": self.lol_path}
                     json.dump(config, f)
             else:
-                try:
-                    # 以读写模式打开文件
-                    with cfg_file.open("r+", encoding="utf-8") as f:
-                        config = json.load(f)
-                        config["lol"] = self.lol_path
-                        f.seek(0)  # 将文件指针移到文件开头
-                        f.truncate()  # 清空文件
-                        json.dump(config, f)
-                except Exception as e:
-                    print(e)
+                # 以读写模式打开文件
+                with cfg_file.open("r+", encoding="utf-8") as f:
+                    config = json.load(f)
+                    config["lol"] = self.lol_path
+                    f.seek(0)  # 将文件指针移到文件开头
+                    f.truncate()  # 清空文件
+                    json.dump(config, f)
             # 功能列表更新
             self.reload()
             self.path_show.setText(self.lol_path)
@@ -279,7 +200,6 @@ class LCUFixTool(QMainWindow, Ui_MainWindow):
 
     # 重载客户端
     def reload_client(self):
-        logger.info("重载客户端")
         # 判断是否以管理员权限运行
         if not is_admin():
             # 错误弹窗提示
@@ -302,7 +222,6 @@ class LCUFixTool(QMainWindow, Ui_MainWindow):
     def clean_client(self):
         import json
 
-        logger.warning("净化客户端")
         # 提示确认
         if (
             QMessageBox.question(
@@ -345,6 +264,33 @@ class LCUFixTool(QMainWindow, Ui_MainWindow):
                     QCoreApplication.translate("MainWindow", "客户端已净化完成，请重新登录", None),
                 )
 
+    # 启动下载线程
+    def start_download(self):
+        self.downloadThread = DownloadThread(self.downloadQueue)
+        self.downloadThread.finsihed.connect(self.downloadFinished)
+        self.downloadThread.progressChanged.connect(self.updateProgress)
+        self.downloadThread.start()
+
+    # 更新进度条
+    def updateProgress(self, value):
+        value = round(value, 2)
+        if self.downloadQueue.task_count() > 0:
+            lableText = f"下载({value}%),剩余{self.downloadQueue.task_count()}个"
+        else:
+            lableText = f"下载({value}%)"
+        self.current_operation.setText(lableText)
+        self.progressBar.setVisible(True)  # 显示进度条
+        self.progressBar.setValue(value)
+
+    # 下载完成
+    def downloadFinished(self):
+        wadItem = self.wadQueue.pop(0)
+        set_lol_wad_status(self.lol_path, wadItem, True)
+        self.reload()
+        if self.downloadQueue.task_count() == 0:
+            self.progressBar.setVisible(False)  # 隐藏进度条
+            self.current_operation.setText("")
+
     # 重写mousePressEvent、mouseMoveEvent函数,以实现窗口拖动
     def mousePressEvent(self, event):
         self.m_last_pos = event.globalPosition().toPoint()
@@ -360,9 +306,14 @@ class LCUFixTool(QMainWindow, Ui_MainWindow):
 
 if __name__ == "__main__":  # 程序的入口
     try:
-        logger.info("开始启动程序")
         app = LCUFixTool()
         app.show()
         sys.exit(app.app.exec())  # 进入事件循环
     except Exception as e:
-        logger.error(e)
+        # 弹出错误提示
+        QMessageBox.critical(
+            app,
+            "错误",
+            f"程序出现错误，请联系开发者！\n错误信息：{e}",
+            QMessageBox.Ok,
+        )
